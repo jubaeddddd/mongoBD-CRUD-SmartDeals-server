@@ -24,6 +24,8 @@ async function run() {
     const productsCollection=db.collection('products')
     const bidsCollection=db.collection('bids')
 
+
+    //products APIs
     app.get('/products',async(req,res)=>{
         const projectFields={title:1,price_min:1,price_max:1,image:1}
         // const cursor=productsCollection.find().sort({price_min:-1}).skip(2).limit(2).project(projectFields)
@@ -40,7 +42,7 @@ async function run() {
 
     app.get('/products/:id',async(req,res)=>{
         const id=req.params.id
-        const query={_id: new ObjectId(id)}
+        const query={_id: id}
         const result=await productsCollection.findOne(query)
         res.send(result)
     })
@@ -73,7 +75,18 @@ async function run() {
        res.send(result)
     })
 
-    //bids related apis
+
+
+    //latest products APIs
+    app.get('/latest-products',async(req,res)=>{
+      const cursor=productsCollection.find().sort({created_at: -1}).limit(6)
+      const result=await cursor.toArray()
+      res.send(result)
+    })
+
+
+
+    //bids related APIs
     app.get('/bids',async(req,res)=>{
       const email=req.query.email
       const query={}
